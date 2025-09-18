@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Homepage - Your GitHub Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #24292f;
+            color: #fff;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 2rem;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .profile img {
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            border: 3px solid #6366f1;
+        }
+        .profile-details {
+            flex: 1;
+        }
+        .profile-details h2 {
+            margin: 0 0 0.5rem 0;
+        }
+        .profile-details a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .info-section {
+            margin-bottom: 2rem;
+        }
+        .info-section h3 {
+            margin-bottom: 0.5rem;
+        }
+        .ip-list {
+            list-style: none;
+            padding: 0;
+        }
+        .ip-list li {
+            margin-bottom: 0.5rem;
+        }
+        .chatbot-section {
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .chatbot-header {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        #chatbot-messages {
+            height: 200px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .chatbot-input-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+        #chatbot-input {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+        #chatbot-send {
+            background: #6366f1;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+        #chatbot-send:disabled {
+            background: #a5b4fc;
+        }
+        @media (max-width: 600px) {
+            .profile {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to My Homepage!</h1>
+        <p>Discover my GitHub profile, contact info, and cool features below.</p>
+    </header>
+    <div class="container">
+        <section class="profile">
+            <img src="https://github.com/<YOUR_GITHUB_USERNAME>.png" alt="GitHub Avatar">
+            <div class="profile-details">
+                <h2><YOUR_GITHUB_USERNAME></h2>
+                <p>Email: <a href="mailto:<YOUR_EMAIL>"><YOUR_EMAIL></a></p>
+                <p>
+                    <a href="https://github.com/<YOUR_GITHUB_USERNAME>" target="_blank">
+                        Visit my GitHub Profile
+                    </a>
+                </p>
+            </div>
+        </section>
+        <section class="info-section">
+            <h3>Your Public IP Addresses</h3>
+            <ul class="ip-list">
+                <li>Public IP: <span id="public-ip">Loading...</span></li>
+                <li>IPv4: <span id="ipv4">Loading...</span></li>
+                <li>IPv6: <span id="ipv6">Loading...</span></li>
+            </ul>
+        </section>
+        <section class="chatbot-section">
+            <div class="chatbot-header">Chatbot (powered by ChatGPT-4)</div>
+            <div id="chatbot-messages"></div>
+            <div class="chatbot-input-row">
+                <input type="text" id="chatbot-input" placeholder="Type your message..." autocomplete="off">
+                <button id="chatbot-send">Send</button>
+            </div>
+            <small style="color:#6b7280;">Note: This demo uses OpenAI's API. You must provide your own API key in the code.</small>
+        </section>
+    </div>
+    <script>
+        // Replace with your GitHub username and email
+        document.body.innerHTML = document.body.innerHTML.replace(/<YOUR_GITHUB_USERNAME>/g, 'your-github-username');
+        document.body.innerHTML = document.body.innerHTML.replace(/<YOUR_EMAIL>/g, 'your.email@example.com');
+
+        // Fetch public IP (IPv4 and IPv6)
+        async function fetchIPs() {
+            // Public IP (IPv4 or IPv6)
+            fetch('https://api.ipify.org?format=json')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('public-ip').textContent = data.ip;
+                    document.getElementById('ipv4').textContent = data.ip;
+                })
+                .catch(() => {
+                    document.getElementById('public-ip').textContent = 'Unavailable';
+                    document.getElementById('ipv4').textContent = 'Unavailable';
+                });
+
+            // IPv6
+            fetch('https://api64.ipify.org?format=json')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('ipv6').textContent = data.ip;
+                })
+                .catch(() => {
+                    document.getElementById('ipv6').textContent = 'Unavailable';
+                });
+        }
+        fetchIPs();
+
+        // Simple Chatbot UI
+        const messagesDiv = document.getElementById('chatbot-messages');
+        const input = document.getElementById('chatbot-input');
+        const sendBtn = document.getElementById('chatbot-send');
+
+        function appendMessage(sender, text) {
+            const msg = document.createElement('div');
+            msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+            messagesDiv.appendChild(msg);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // ChatGPT-4 API integration (requires your own API key)
+        async function chatWithGPT(message) {
+            // Insert your OpenAI API key below
+            const OPENAI_API_KEY = 'YOUR_OPENAI_API_KEY';
+            if (OPENAI_API_KEY === 'YOUR_OPENAI_API_KEY') {
+                appendMessage('Bot', 'API key not set. Please add your OpenAI API key in the code.');
+                return;
+            }
+            appendMessage('You', message);
+            sendBtn.disabled = true;
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${OPENAI_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4',
+                        messages: [{role: 'user', content: message}],
+                        max_tokens: 150
+                    })
+                });
+                const data = await response.json();
+                if (data.choices && data.choices[0]) {
+                    appendMessage('Bot', data.choices[0].message.content);
+                } else {
+                    appendMessage('Bot', 'No response from ChatGPT.');
+                }
+            } catch (e) {
+                appendMessage('Bot', 'Error connecting to ChatGPT.');
+            }
+            sendBtn.disabled = false;
+        }
+
+        sendBtn.addEventListener('click', () => {
+            const msg = input.value.trim();
+            if (msg) {
+                chatWithGPT(msg);
+                input.value = '';
+            }
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+
+        // Welcome message
+        appendMessage('Bot', 'Hello! Ask me anything.');
+    </script>
+</body>
+</html>
